@@ -1,11 +1,11 @@
-class Session {
+class TeachingSession {
   final int id;
   final String userId;
   final String topic;
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Session({
+  TeachingSession({
     required this.id,
     required this.userId,
     required this.topic,
@@ -13,8 +13,8 @@ class Session {
     required this.updatedAt,
   });
 
-  factory Session.fromMap(Map<String, dynamic> map) {
-    return Session(
+  factory TeachingSession.fromMap(Map<String, dynamic> map) {
+    return TeachingSession(
       id: map['id'] as int,
       userId: map['user_id'] as String,
       topic: map['topic'] as String,
