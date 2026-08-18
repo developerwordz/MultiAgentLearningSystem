@@ -4,7 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../teaching/teaching_screen.dart';
 import 'session_history_screen.dart';
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

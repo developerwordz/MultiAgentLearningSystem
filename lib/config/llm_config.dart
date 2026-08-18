@@ -1,13 +1,10 @@
 class LLMConfig {
-  // IMPORTANT: In production, move this to environment variables
-  // For now, we'll hardcode for testing
-  
-  // Choose your AI provider
-  static const String provider = 'gemini'; // or 'gpt'
+  static const String provider = 'gemini';  // Make sure this is 'gemini'
   
   // Gemini API
-
+  static const String geminiApiKey = 'REDACTED_GEMINI_KEY';  
+  static const String geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
   
   static const int maxTokens = 500;
-  static const double temperature = 0.4;
+  static const double temperature = 0.7;
 }

@@ -8,10 +8,10 @@ class TeachingScreen extends StatefulWidget {
   final int? existingSessionId; // NEW: for resuming
 
   const TeachingScreen({
-    Key? key,
+    super.key,
     required this.topic,
     this.existingSessionId,
-  }) : super(key: key);
+  });
 
   @override
   State<TeachingScreen> createState() => _TeachingScreenState();

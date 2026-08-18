@@ -5,7 +5,7 @@ import '../../providers/auth_provider.dart';
 import '../teaching/teaching_screen.dart';
 
 class SessionHistoryScreen extends StatefulWidget {
-  const SessionHistoryScreen({Key? key}) : super(key: key);
+  const SessionHistoryScreen({super.key});
 
   @override
   State<SessionHistoryScreen> createState() => _SessionHistoryScreenState();
