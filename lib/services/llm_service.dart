@@ -3,10 +3,11 @@ import '../config/llm_config.dart';
 
 class LLMService {
   final Dio _dio = Dio();
+
   final List<Message> _conversationHistory = [];
 
-  // System prompt for Student Agent
-  static const String studentSystemPrompt = '''You are Alex, a student trying to learn from the user.
+  static const String studentSystemPrompt = '''
+You are Alex, a student trying to learn from the user.
 
 CORE RULES:
 1. You NEVER explain concepts yourself, even if you know them.
@@ -22,29 +23,29 @@ BEHAVIOR:
 - If wrong/incomplete: "Wait, but...?" and ask clarifying questions.
 - NEVER say "Actually, the correct answer is..."
 
-Remember: You are a LEARNER, not a teacher.''';
+Remember: You are a LEARNER, not a teacher.
+''';
 
   LLMService() {
-    // Add system message
-    _conversationHistory.add(
-      Message(role: 'system', content: studentSystemPrompt),
-    );
+    resetConversation();
   }
 
-  // Send message and get response
   Future<String> sendMessage(String userMessage) async {
     try {
-      // Add user message to history
       _conversationHistory.add(
-        Message(role: 'user', content: userMessage),
+        Message(
+          role: 'user',
+          content: userMessage,
+        ),
       );
 
-      // Call Gemini API
       final response = await _callGemini();
 
-      // Add AI response to history
       _conversationHistory.add(
-        Message(role: 'assistant', content: response),
+        Message(
+          role: 'model',
+          content: response,
+        ),
       );
 
       return response;
@@ -54,55 +55,94 @@ Remember: You are a LEARNER, not a teacher.''';
     }
   }
 
-  // Call Gemini API
   Future<String> _callGemini() async {
-  try {
-    final payload = {
-      'contents': [
-        {
-          'parts': [
-            {'text': _conversationHistory.last.content}
-          ]
-        }
-      ],
-      'generationConfig': {
-        'temperature': LLMConfig.temperature,
-        'maxOutputTokens': LLMConfig.maxTokens,
-      }
-    };
+  final apiKey = LLMConfig.geminiApiKey;
 
-    // Try with new key format
+  if (apiKey.isEmpty) {
+    throw Exception('Gemini API key is missing.');
+  }
+
+  final contents = <Map<String, dynamic>>[];
+
+  // Add conversation history.
+  for (final message in _conversationHistory) {
+    if (message.role == 'user' || message.role == 'model') {
+      contents.add({
+        'role': message.role,
+        'parts': [
+          {
+            'text': message.content,
+          }
+        ],
+      });
+    }
+  }
+
+  try {
     final response = await _dio.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-      queryParameters: {
-        'key': LLMConfig.geminiApiKey,
+      LLMConfig.geminiUrl,
+      
+      data: {
+        'systemInstruction': {
+          'parts': [
+            {
+              'text': studentSystemPrompt,
+            }
+          ],
+        },
+        'contents': contents,
+        'generationConfig': {
+          'maxOutputTokens': LLMConfig.maxTokens,
+        },
       },
-      data: payload,
-      options: Options(
-        contentType: Headers.jsonContentType,
-      ),
+     options: Options(
+  contentType: Headers.jsonContentType,
+  headers: {
+    'x-goog-api-key': apiKey,
+  },
+),
     );
 
-    if (response.statusCode == 200) {
-      final text = response.data['candidates'][0]['content']['parts'][0]['text'];
-      return text.toString();
-    } else {
-      throw Exception('Gemini API error: ${response.statusCode} - ${response.data}');
+    print('Gemini status: ${response.statusCode}');
+    print('Gemini response: ${response.data}');
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Gemini API ${response.statusCode}: ${response.data}',
+      );
     }
-  } catch (e) {
-    throw Exception('Failed to get Gemini response: $e');
+
+    final candidates = response.data['candidates'];
+
+    if (candidates == null || candidates.isEmpty) {
+      throw Exception(
+        'Gemini returned no candidates: ${response.data}',
+      );
+    }
+
+    final parts = candidates[0]['content']['parts'];
+
+    if (parts == null || parts.isEmpty) {
+      throw Exception(
+        'Gemini returned no text: ${response.data}',
+      );
+    }
+
+    return parts[0]['text'].toString();
+  } on DioException catch (e) {
+    print('Dio error: ${e.response?.data}');
+    throw Exception(
+      'Gemini request failed: ${e.response?.data ?? e.message}',
+    );
   }
 }
 
   List<Message> getConversationHistory() {
-    return _conversationHistory;
+    return List.unmodifiable(_conversationHistory);
   }
 
   void resetConversation() {
     _conversationHistory.clear();
-    _conversationHistory.add(
-      Message(role: 'system', content: studentSystemPrompt),
-    );
   }
 }
 
@@ -110,9 +150,15 @@ class Message {
   final String role;
   final String content;
 
-  Message({required this.role, required this.content});
+  Message({
+    required this.role,
+    required this.content,
+  });
 
   Map<String, dynamic> toMap() {
-    return {'role': role, 'content': content};
+    return {
+      'role': role,
+      'content': content,
+    };
   }
 }

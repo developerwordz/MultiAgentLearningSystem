@@ -1,10 +1,14 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class LLMConfig {
-  static const String provider = 'gemini';  // Make sure this is 'gemini'
-  
-  // Gemini API
-  static const String geminiApiKey = 'REDACTED_GEMINI_KEY';  
-  static const String geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-  
+  static const String provider = 'gemini';
+
+ static String get geminiApiKey =>
+       dotenv.get('envgemeniApiKey');
+
+  static const String geminiUrl =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent';
+
   static const int maxTokens = 500;
   static const double temperature = 0.7;
 }
