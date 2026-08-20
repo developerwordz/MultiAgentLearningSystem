@@ -63,6 +63,7 @@ class AuthProvider extends ChangeNotifier {
   try {
     await supabase.auth.signInWithOAuth(
       OAuthProvider.google,
+      redirectTo: 'http://localhost:3000/',
     );
   } catch (e) {
     _error = e.toString();
