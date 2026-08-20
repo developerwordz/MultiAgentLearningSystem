@@ -4,7 +4,7 @@ class LLMConfig {
   static const String provider = 'gemini';
 
  static String get geminiApiKey =>
-       dotenv.get('GEMINI_API_KEY');
+       dotenv.get('envgemeniApiKey');
 
   static const String geminiUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent';
