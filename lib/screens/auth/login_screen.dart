@@ -14,14 +14,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
+  
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontSize: 64,
                 ),
               ),
+              
               const SizedBox(height: 12),
               Text(
                 'Protégé Effect',
@@ -115,34 +116,37 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement Google login
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Google login coming soon'),
-                          ),
-                        );
-                      },
-                      icon: const Text('🔵'),
-                      label: const Text('Google'),
+                 child: OutlinedButton.icon(
+                  onPressed: () async {
+    await context.read<AuthProvider>().signInWithGoogle();
+  },
+                    icon: const Text('🔵'),
+                    label: const Text('Google'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.blue),
                     ),
                   ),
+                ),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement GitHub login
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('GitHub login coming soon'),
-                          ),
-                        );
-                      },
-                      icon: const Text('⚫'),
-                      label: const Text('GitHub'),
+                  // In login_screen.dart, replace the Google button:
+                Expanded(
+                 child: OutlinedButton.icon(
+                  onPressed: () {
+      
+      // Will integrate google_sign_in package
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Google login coming in next phase'),
+        ),
+      );
+    },
+                    icon: const Text('⚫'),
+                    label: const Text('Github'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.blue),
                     ),
                   ),
+                ),
                 ],
               ),
               const SizedBox(height: 24),

@@ -107,11 +107,11 @@ class _TeachingScreenState extends State<TeachingScreen> {
                               ),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: isUser
-                                    ? Colors.blue[500]
-                                    : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              color: isUser
+                              ? Colors.blue.shade600      // Darker blue for user
+                              : Colors.grey.shade800,     // Darker gray for student
+                          borderRadius: BorderRadius.circular(12),
+                          ),
                               constraints: BoxConstraints(
                                 maxWidth:
                                     MediaQuery.of(context).size.width * 0.75,
@@ -128,9 +128,9 @@ class _TeachingScreenState extends State<TeachingScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    message.content,
+                                   message.content,
                                     style: TextStyle(
-                                      color: isUser ? Colors.white : Colors.black87,
+                                      color: isUser ? Colors.white : Colors.white,  // Both white on dark
                                     ),
                                   ),
                                 ],

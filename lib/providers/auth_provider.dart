@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 
@@ -54,7 +55,22 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+ Future<void> signInWithGoogle() async {
+  _isLoading = true;
+  _error = null;
+  notifyListeners();
 
+  try {
+    await supabase.auth.signInWithOAuth(
+      OAuthProvider.google,
+    );
+  } catch (e) {
+    _error = e.toString();
+  }
+
+  _isLoading = false;
+  notifyListeners();
+}
   // Login
   Future<void> login(String email, String password) async {
     _isLoading = true;
